@@ -46,10 +46,10 @@ const SitePowerChart = () => {
   return (
     <div style={{ width: '100%', marginTop: '20px' }}>
       <h3>Puissance du site</h3>
-      <div>
+      <div style={{ width: '100%', height: '250px' }}>
         <Line data={productionData} />
       </div>
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ width: '100%', height: '250px', marginTop: '20px' }}>
         <Line data={consumptionData} />
       </div>
     </div>
