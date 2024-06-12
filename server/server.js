@@ -44,19 +44,25 @@ app.get('/api/consumption', async (req, res) => {
 
 app.get('/api/power-details', async (req, res) => {
   try {
-    const startTime = '2024-06-11 ';
-    const endTime = '2024-06-11 ';
+    const startTime = '2024-06-11%2000:00:00';
+    const endTime = '2024-06-11%2023:59:59';
+
+    console.log("Fetching power details...");
 
     const response = await axios.get(`https://monitoringapi.solaredge.com/site/${siteId}/powerDetails`, {
       params: {
-        meters: 'PRODUCTION,CONSUMPTION',
+        meters: 'CONSUMPTION',
         startTime,
         endTime,
         api_key: apiKey,
       },
     });
+
+    console.log("Power details fetched successfully:", response.data);
+
     res.json(response.data);
   } catch (error) {
+    console.error("Error fetching power details:", error);
     res.status(500).send(error.toString());
   }
 });

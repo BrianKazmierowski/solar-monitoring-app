@@ -12,28 +12,16 @@ const getProductionData = async () => {
   }
 };
 
-const getConsumptionData = async () => {
-  try {
-    const response = await axios.get('http://localhost:3001/api/consumption');
-    return response.data;
-  } catch (error) {
-    console.error('Erreur lors de la récupération des données de consommation:', error);
-    return [];
-  }
-};
-
 const getPowerDetails = async () => {
   try {
     const response = await axios.get('http://localhost:3001/api/power-details');
+    console.log(response)
     return response.data.map(item => item.consumption);
   } catch (error) {
     console.error('Erreur lors de la récupération des détails de puissance:', error);
     return [];
   }
 };
-
-
-
 
 const EnergyProductionConsumptionChart = () => {
   const [productionData, setProductionData] = useState([]);
@@ -46,7 +34,6 @@ const EnergyProductionConsumptionChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       const production = await getProductionData();
-     // const consumption = await getConsumptionData();
       const consumption = await getPowerDetails();
       setProductionData(production);
       setConsumptionData(consumption);
