@@ -1,44 +1,67 @@
-import express from 'express';
-import fetch from 'node-fetch'; // Importez fetch une seule fois
-import cors from 'cors';
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
 
 const app = express();
 const port = 3001;
 
-app.use(cors());
-const axios = require('axios');
+app.use(cors()); // Activer les CORS pour toutes les routes
+
+const siteId = '2508316';
+const apiKey = '8PZR50LGWNSRDGWM5XDWJ4DOSUECST1V';
 
 app.get('/api/production', async (req, res) => {
   try {
-    const response = await axios.get('https://monitoringapi.solaredge.com/site/2508316/energy', {
+    const response = await axios.get(`https://monitoringapi.solaredge.com/site/${siteId}/energy`, {
       params: {
         timeUnit: 'QUARTER_OF_AN_HOUR',
-        startDate: '2023-06-11',
-        endDate: '2023-06-11',
-        api_key: '8PZR50LGWNSRDGWM5XDWJ4DOSUECST1V'
-      }
+        startDate: '2024-06-11',
+        endDate: '2024-06-11',
+        api_key: apiKey,
+      },
     });
-    res.json(response.data);
+    res.json(response.data.energy.values);
   } catch (error) {
-    console.error('Erreur lors de la récupération des données de production:', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des données de production' });
+    res.status(500).send(error.toString());
   }
 });
-
 
 app.get('/api/consumption', async (req, res) => {
   try {
-    const apiKey = '8PZR50LGWNSRDGWM5XDWJ4DOSUECST1V';
-    const siteId = '2508316';
-    const response = await fetch(`https://monitoringapi.solaredge.com/site/${siteId}/power?api_key=${apiKey}`);
-    const data = await response.json();
-    res.json(data);
+    const response = await axios.get(`https://monitoringapi.solaredge.com/site/${siteId}/consumption`, {
+      params: {
+        timeUnit: 'QUARTER_OF_AN_HOUR',
+        startDate: '2024-06-11',
+        endDate: '2024-06-11',
+        api_key: apiKey,
+      },
+    });
+    res.json(response.data.consumption.values);
   } catch (error) {
-    console.error('Erreur lors de la récupération des données de consommation:', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des données de consommation' });
+    res.status(500).send(error.toString());
   }
 });
 
+app.get('/api/power-details', async (req, res) => {
+  try {
+    const startTime = '2024-06-11 ';
+    const endTime = '2024-06-11 ';
+
+    const response = await axios.get(`https://monitoringapi.solaredge.com/site/${siteId}/powerDetails`, {
+      params: {
+        meters: 'PRODUCTION,CONSUMPTION',
+        startTime,
+        endTime,
+        api_key: apiKey,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).send(error.toString());
+  }
+});
+
+
 app.listen(port, () => {
-  console.log(`Serveur démarré sur le port ${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
